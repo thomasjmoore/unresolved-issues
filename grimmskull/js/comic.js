@@ -4,7 +4,7 @@
 // the page (#nav-prev / #nav-next) rather than recomputing URLs, so
 // navigation always matches wherever the visible buttons point.
 document.addEventListener("DOMContentLoaded", function () {
-  // The current ChromaVision mode (if any) rides along as a URL hash, so
+  // The current Chroma-vision mode (if any) rides along as a URL hash, so
   // it should survive every navigation - not just within the reader, but
   // clicking the header logo/Home/Archive/About too. The decision of
   // *which* mode to show on load already happened before first paint
@@ -25,10 +25,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Archive tiles live on the archive list page itself, which has no
+  // .comic-page-wrap - this has to be wired here, before the early return
+  // below, or it would never run on that page at all.
+  document.querySelectorAll(".archive-tile").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      if (!window.location.hash) return;
+      e.preventDefault();
+      window.location.href = withHash(link.href);
+    });
+  });
+
   var wrap = document.querySelector(".comic-page-wrap");
   if (!wrap) return;
 
-  // ChromaVision pages stack two images in .page-stack instead of a single
+  // Chroma-vision pages stack two images in .page-stack instead of a single
   // <img> - click/tap navigation should hit that sized container instead,
   // since it (not either individual stacked image) now represents "the
   // image" at the usual 80%-of-column size.
@@ -125,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
     { passive: true }
   );
 
-  // ChromaVision mode toggle - only present on pages with a B&W
+  // Chroma-vision mode toggle - only present on pages with a B&W
   // counterpart image (see comic-mode-switch.html / comic-page-image.html);
   // on every other page these elements don't exist and this whole block
   // is a no-op. The <html class="chroma-mode-bw"> toggle itself is the
